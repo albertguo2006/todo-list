@@ -22,9 +22,11 @@ public class TodoListPanel extends JPanel implements ActionListener {
     public static final String SAVEFILE_TODO_LIST_JSON = SAVE_DIR + File.separator + "todo_list.json";
     private final JTextField textField;
     private final DefaultListModel<String> textModel;
+    private final ToDoList list;
 
-    public TodoListPanel() {
+    public TodoListPanel(ToDoList list) {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.list = list''
 
         textField = new JTextField(20);
         textField.addActionListener(this); // JTextFields fire an ActionEvent when the user types Enter
@@ -78,52 +80,6 @@ public class TodoListPanel extends JPanel implements ActionListener {
         add(textField);
         add(scrollPane);
         add(save);
-    }
-
-    private void loadJsonFromFile() {
-        ensureJsonExists();
-        JSONArray jsonArray = readJsonFile();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            String task = jsonObject.getString("task");
-            boolean completed = jsonObject.getBoolean("completed");
-            if (completed) {
-                task += DONE;
-            }
-            textModel.addElement(task);
-        }
-    }
-
-    private static void ensureJsonExists() {
-        Path resourcesDir = Paths.get(SAVE_DIR);
-        if (!Files.exists(resourcesDir)) {
-            try {
-                Files.createDirectories(resourcesDir);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to create save file directory", e);
-            }
-        }
-
-        Path resourcesJsonFile = Paths.get(SAVEFILE_TODO_LIST_JSON);
-        if (!Files.exists(resourcesJsonFile)) {
-            try {
-                Files.createFile(resourcesJsonFile);
-                Files.write(resourcesJsonFile, "[]".getBytes());
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to create todo_list.json file", e);
-            }
-        }
-    }
-
-    private JSONArray readJsonFile() {
-        String jsonString;
-        try {
-            jsonString = Files.readString(Paths.get(SAVEFILE_TODO_LIST_JSON));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return new JSONArray(jsonString);
     }
 
     private void save() {
